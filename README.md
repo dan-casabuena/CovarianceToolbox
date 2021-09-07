@@ -8,6 +8,4 @@ TODO:
 - [ ]  Testing package
 - [ ]  Config files
 - [ ]  Figure out what to add to TODO
-
-Productionalize:
-- [ ]  CovEstHard/_cross_validation
+- [ ]  Productionalize CovEstHard/_cross_validation
