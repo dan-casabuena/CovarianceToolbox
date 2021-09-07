@@ -4,8 +4,11 @@
 🔧 Work in progress! 🔧
 
 TODO:
+
+To Implement 
 - [ ]  The rest of the package
 - [ ]  Testing package
 - [ ]  Config files
- To Finish:
+
+To Finish:
 - [ ]  CovEstHard/_cross_validation
