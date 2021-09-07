@@ -1,8 +1,6 @@
 # Covariance Toolbox 🛠️
 ### A Python Library inspired by the CRAN R Package *Covtools*
 
-🔧 Work in progress! 🔧
-
 TODO:
 - [ ]  The rest of the package
 - [ ]  Testing package
