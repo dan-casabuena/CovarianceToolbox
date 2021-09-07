@@ -4,11 +4,10 @@
 🔧 Work in progress! 🔧
 
 TODO:
-
-To Implement 
 - [ ]  The rest of the package
 - [ ]  Testing package
 - [ ]  Config files
+- [ ]  Figure out what to add to TODO
 
-To Finish:
+Productionalize:
 - [ ]  CovEstHard/_cross_validation
