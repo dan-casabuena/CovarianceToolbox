@@ -12,7 +12,20 @@ import pandas as pd
 
 def estimate(features: Union[np.ndarray, pd.DataFrame, List[List]], threshold: Union[int, float] = None, nCV=10, parallel=False):
     """
-    TODO Implement Docstring
+    A function that performs Covariance Estimation via Hard Thresholding
+    proposed by Bickel and Levina in their 2008 paper.
+
+    The function requires a matrix of features, and an optional threshold
+    value or set/array of values, which will be asserted using a cross validation
+    technique also proposed within Bickel and Levina's 2008 paper.
+
+    The technique is recommended for features that are sufficiently sparse enough
+    with significantly more parameters than there is in the sample size.
+
+    Returns a thresholded sample covariance matrix.
+
+    TODO Implement parallelization
+    TODO Add check for positive definiteness
     """
 
     try:
@@ -23,17 +36,13 @@ def estimate(features: Union[np.ndarray, pd.DataFrame, List[List]], threshold: U
         
     if threshold is None:
         threshold = np.sqrt(np.log(features.shape[0]) / features.shape[1])
-    else:
-        threshold = threshold
-        #Do the hustle and split the features into two
-        #threshold = _cross_validation(features)
 
-    #DEBUG if threshold actually changes value here... don't like the variable referencing here
-
-    n = features.shape[0]
-    p = features.shape[1]
-
-    #Do we need these? I don't think so lmao
+    # Check if it is an iterable object; leads into cross validation method
+    try:
+        iter(threshold)
+        return transform(features, _cross_validation(features, threshold, nCV))
+    except TypeError:
+        pass
 
     return transform(features, threshold)
 
@@ -59,15 +68,42 @@ def transform(X, threshold):
 
     return cov
 
-def _cross_validation(self):
+def _cross_validation(X, param, nCV):
     """
-    TODO Implement Docstring
+    A cross validation method proposed in Bickel and Levina (2008) '3. Choice of threshold'
+
+    Splits the sample into two 'justified' sizes, repeated N times. Utilizing the Frobenius metric
+    and the respective empirical covariancce matrices based on the two split samples, the function
+    finds the minimum cross-validation value from the function provided within the paper, provided that
+    _cross_validation() is fed an array of parameters.
+
+    Returns a value with the smallest CV Error.
     """
+
+    n = X.shape[0]
+
+    # Define N (nCV), then do below N times randomly...
+    # Probably gonna have to change the seed each time? Probably don't have to LMAO
+
+    n1 = np.rint(n * (1 - 1/np.log(n)))
+    # n2 = n / np.log(n)
+
+    temp = []
+
+    for s in param:
+
+        sum = 0 # Is sum a keyword? Lol
+
+        for i in range(len(nCV)):
+
+            # Check if each loop we have a different permutation each time :(
+
+            indices = np.random.permutation(X.shape[0])
+            X1_idx, X2_idx = indices[:n1], indices[n1:]
+            X1, X2 = X[X1_idx,:], X[X2_idx,:]
+            sum += np.linalg.norm(transform(X1, s) - np.cov(X2, rowvar=False, bias=True))
+
+        sum = sum * (1/nCV)
+        temp.append(sum)
     
-
-class DimensionError(Exception):
-    def __init__(self, message='Inputted data has dimensions not supported by package.'):
-        self.message = message
-    #Fix
-
-        
+    return min(temp)
