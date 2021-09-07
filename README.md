@@ -2,6 +2,7 @@
 ### A Python Library inspired by the CRAN R Package *Covtools*
 
 TODO:
+- [X] fix the todo
 - [ ]  The rest of the package
 - [ ]  Testing package
 - [ ]  Config files
