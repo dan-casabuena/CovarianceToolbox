@@ -9,6 +9,7 @@
 from typing import Union, List
 import numpy as np
 import pandas as pd
+import pytest
 
 def estimate(features: Union[np.ndarray, pd.DataFrame, List[List]], threshold: Union[int, float] = None, nCV=10, parallel=False):
     """
@@ -22,7 +23,7 @@ def estimate(features: Union[np.ndarray, pd.DataFrame, List[List]], threshold: U
     The technique is recommended for features that are sufficiently sparse enough
     with significantly more parameters than there is in the sample size.
 
-    Returns a thresholded sample covariance matrix.
+    Returns an array; a thresholded sample covariance matrix.
 
     TODO Implement parallelization
     TODO Add check for positive definiteness
@@ -77,13 +78,12 @@ def _cross_validation(X, param, nCV):
     finds the minimum cross-validation value from the function provided within the paper, provided that
     _cross_validation() is fed an array of parameters.
 
-    Returns a value with the smallest CV Error.
+    Returns a float value with the smallest CV Error.
     """
 
     n = X.shape[0]
 
-    # Define N (nCV), then do below N times randomly...
-    # Probably gonna have to change the seed each time? Probably don't have to LMAO
+    # Split features into justifiable sizes
 
     n1 = np.rint(n * (1 - 1/np.log(n)))
     # n2 = n / np.log(n)
@@ -92,7 +92,7 @@ def _cross_validation(X, param, nCV):
 
     for s in param:
 
-        sum = 0 # Is sum a keyword? Lol
+        total = 0
 
         for i in range(len(nCV)):
 
@@ -101,9 +101,9 @@ def _cross_validation(X, param, nCV):
             indices = np.random.permutation(X.shape[0])
             X1_idx, X2_idx = indices[:n1], indices[n1:]
             X1, X2 = X[X1_idx,:], X[X2_idx,:]
-            sum += np.linalg.norm(transform(X1, s) - np.cov(X2, rowvar=False, bias=True))
+            total += np.linalg.norm(transform(X1, s) - np.cov(X2, rowvar=False, bias=True))
 
-        sum = sum * (1/nCV)
-        temp.append(sum)
+        total = total * (1/nCV)
+        temp.append(total)
     
     return min(temp)
